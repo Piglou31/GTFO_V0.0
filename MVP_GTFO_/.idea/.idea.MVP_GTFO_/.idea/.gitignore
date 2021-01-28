@@ -1,0 +1,13 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Rider ignored files
+/contentModel.xml
+/modules.xml
+/projectSettingsUpdater.xml
+/.idea.MVP_GTFO_.iml
+# Datasource local storage ignored files
+/../../../../../../../../../../:\Users\game2\Documents\GitHub\GTFO_V0.0\MVP_GTFO_\.idea\.idea.MVP_GTFO_\.idea/dataSources/
+/dataSources.local.xml
+# Editor-based HTTP Client requests
+/httpRequests/
