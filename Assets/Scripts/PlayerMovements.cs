@@ -5,8 +5,10 @@ using UnityEngine;
 public class PlayerMovements : MonoBehaviour
 {
     
-    [SerializeField][Range(0,20)][Tooltip("Vitesse de déplacement en mètres par secondes")] private int m_speed;
-    [SerializeField][Range(0,20)][Tooltip("Vitesse de déplacement de base en mètres par secondes ")] private float m_basespeed;
+    [SerializeField][Range(0,50)][Tooltip("Vitesse de déplacement en mètres par secondes")] private int m_acceleration;
+    [SerializeField][Range(0,1000)][Tooltip("Vitesse de déplacement de base en mètres par secondes ")] private float m_basespeed;
+    [SerializeField][Range(0,1)][Tooltip("Vitesse de décélération")] private float m_deceleration;
+    [SerializeField][Range(0,1)][Tooltip("Vitesse de décélération")] private float m_maxSpeed;
     [SerializeField][Range(0,4)][Tooltip("Durée de hover en secondes")] private float m_hoverTime = 3f;
     private float m_hoverTimer = 0;
 
@@ -21,6 +23,7 @@ public class PlayerMovements : MonoBehaviour
     [SerializeField][Tooltip("La couleur s'assumera le machin lorsqu'il truc")] private Color m_hoverColor;
     private Color m_defaultColor;
     
+    
 
 
     // Start is called before the first frame update
@@ -33,6 +36,8 @@ public class PlayerMovements : MonoBehaviour
         m_rigidbody = GetComponent<Rigidbody>();
 
         m_rigidbody.useGravity = true;
+
+        StartCoroutine ("Accelerate");
     }
 
     // Update is called once per frame
@@ -44,6 +49,7 @@ public class PlayerMovements : MonoBehaviour
 
         if (m_hovering) Hover();
 
+        //VelocityHandling();
     }
 
     /// <summary>
@@ -53,14 +59,19 @@ public class PlayerMovements : MonoBehaviour
     {
         
 
-        float translationV = Input.GetAxis("Vertical") * m_speed * Time.deltaTime;
-        float translationH = Input.GetAxis("Horizontal") * m_speed * Time.deltaTime;
+        float forceV = Input.GetAxis("Vertical") * m_acceleration;
+        float forceH = Input.GetAxis("Horizontal") * m_acceleration;
         
-        transform.Translate(Vector3.forward * translationV,Space.World);
-        transform.Translate(Vector3.right * translationH,Space.World);
-
-        StartCoroutine ("Accelerate");
+        Vector3 force = Vector3.forward * forceV +Vector3.right * forceH;
+        
+        m_rigidbody.AddForce(force * Time.deltaTime , ForceMode.Impulse);
     }
+
+    /*private void VelocityHandling()
+    {
+        if(Input.GetAxis("Vertical") == 0 && Input.GetAxis("Vertical") == 0)m_rigidbody.velocity = m_rigidbody.velocity * m_deceleration;
+        if(Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Horizontal") == 0)m_rigidbody.velocity = m_rigidbody.velocity * m_deceleration;
+    }*/
     
     /// <summary>
     /// 
@@ -75,8 +86,8 @@ public class PlayerMovements : MonoBehaviour
 
         m_rigidbody.velocity = Vector3.zero;
         
-        float translationV = Input.GetAxis("Vertical") * m_speed;
-        float translationH = Input.GetAxis("Horizontal") * m_speed;
+        float translationV = Input.GetAxis("Vertical") * m_acceleration;
+        float translationH = Input.GetAxis("Horizontal") * m_acceleration;
             
         m_hoverDir = new Vector3(translationH,0,translationV);
     }
@@ -92,7 +103,7 @@ public class PlayerMovements : MonoBehaviour
         
         if (m_hoverTimer >= m_hoverTime) HoverEnd();
         
-        transform.Translate(m_hoverDir * Time.deltaTime, Space.World);
+        m_rigidbody.AddForce(m_hoverDir * Time.deltaTime, ForceMode.Impulse);
         
         m_hoverTimer += Time.deltaTime;
     }
@@ -116,11 +127,12 @@ public class PlayerMovements : MonoBehaviour
 
     IEnumerator Accelerate() 
     {
-        if (m_speed < 50)
+        while (m_acceleration < 60)
         {
-        m_speed +=1;
+        m_acceleration +=1;
         yield return new WaitForSeconds(1f);
         Debug.Log("truc");
         }
+        m_acceleration = 1000;
     }
 }

@@ -19,10 +19,14 @@ public class CameraBorderBlock : MonoBehaviour
     {
         Vector3 pos = m_gameCam.WorldToViewportPoint(transform.position);
         // Debug.Log(pos.x);
-        
+
+        float posY = transform.position.y;
+
         pos.x = Mathf.Clamp01(pos.x);
         
-        // Debug.Log(pos.x);
+
         transform.position = m_gameCam.ViewportToWorldPoint(new Vector3(pos.x,pos.y,pos.z));
+
+        transform.position = new Vector3(transform.position.x, posY,transform.position.z);
     }
 }
