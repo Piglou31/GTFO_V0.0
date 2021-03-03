@@ -5,7 +5,8 @@ using UnityEngine;
 public class PlayerMovements : MonoBehaviour
 {
     
-    [SerializeField][Range(0,20)][Tooltip("Vitesse de déplacement en mètres par secondes")] private float m_speed;
+    [SerializeField][Range(0,20)][Tooltip("Vitesse de déplacement en mètres par secondes")] private int m_speed;
+    [SerializeField][Range(0,20)][Tooltip("Vitesse de déplacement de base en mètres par secondes ")] private float m_basespeed;
     [SerializeField][Range(0,4)][Tooltip("Durée de hover en secondes")] private float m_hoverTime = 3f;
     private float m_hoverTimer = 0;
 
@@ -51,11 +52,14 @@ public class PlayerMovements : MonoBehaviour
     private void Deplacement()
     {
         
+
         float translationV = Input.GetAxis("Vertical") * m_speed * Time.deltaTime;
         float translationH = Input.GetAxis("Horizontal") * m_speed * Time.deltaTime;
         
         transform.Translate(Vector3.forward * translationV,Space.World);
         transform.Translate(Vector3.right * translationH,Space.World);
+
+        StartCoroutine ("Accelerate");
     }
     
     /// <summary>
@@ -107,5 +111,16 @@ public class PlayerMovements : MonoBehaviour
         m_hoverDir = Vector3.zero;
 
         m_hoverTimer = 0;
+    }
+
+
+    IEnumerator Accelerate() 
+    {
+        if (m_speed < 50)
+        {
+        m_speed +=1;
+        yield return new WaitForSeconds(1f);
+        Debug.Log("truc");
+        }
     }
 }
